@@ -22,16 +22,6 @@ class CollectionDetailSerializer(serializers.ModelSerializer):
         representation['images'] = ImageSerialiser(instance.images.all(), many=True, context=self.context).data
         return representation
 
-class FavoriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ( 'id', 'name', 'old_price','price', 'sale', 'size', 'favorite', )
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['images'] = ImageSerialiser(instance.images.all(), many=True, context=self.context).data
-        return representation
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -46,6 +36,7 @@ class ProductSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['collection'] = instance.collection.name
         representation['category'] = instance.category.name
+        representation['favorite'] = instance.favorites.all()
         representation['images'] = ImageSerialiser(instance.images.all(), many=True, context=self.context).data
         return representation
 

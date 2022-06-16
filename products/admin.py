@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import *
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
-from django.utils.safestring import mark_safe
 
 class ProductAdminForm(forms.ModelForm):
     description = forms.CharField(label='Описание', widget=CKEditorUploadingWidget())

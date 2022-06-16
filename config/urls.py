@@ -34,7 +34,6 @@ schema_view = get_schema_view(
 )
 router = DefaultRouter()
 
-# router.register('category', CategoryViewSet)
 router.register('collection', CollectionViewSwet)
 router.register('products', ProductViewSet)
 router.register('category', CategoryViewSet)
@@ -47,7 +46,5 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('api/v1/', include(router.urls)),
     path('api/v1/collection/<int:pk>/products/', CollectionDetailViewSet.as_view({'get':'list'})),
-    path('api/v1/favorites/', FavoriteViewSet.as_view({'get':'list'}))
-
-
+    path('api/v1/products/new_product/', NewProductViewSet.as_view({'get':'list'})),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
