@@ -10,16 +10,12 @@ class ProductAdminForm(forms.ModelForm):
         model = Product
         fields = '__all__'
 
-class ImageInline(admin.TabularInline):
-    model = Image
+class ProductImageInline(admin.TabularInline):
+
+    model = ProductImage
     max_num = 12
     min_num = 1
-
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
-    list_display_links = ('name', )
-    search_fields = ('name', )
-    prepopulated_fields = {'slug': ('name', )}
+    extra = 0
 
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
@@ -29,13 +25,13 @@ class CollectionAdmin(admin.ModelAdmin):
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug','created_at', )
-    inlines = [ImageInline,]
+    inlines = [ProductImageInline,]
     form = ProductAdminForm
     prepopulated_fields = {'slug': ('name', )}
 
-admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Collections, CollectionAdmin)
+
 
 
 

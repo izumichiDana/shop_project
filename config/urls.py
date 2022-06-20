@@ -18,11 +18,10 @@ from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from products.views import *
+from zeon_media.views import *
 from rest_framework.routers import DefaultRouter
 from django.conf.urls.static import static
 from django.conf import settings
-
-
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -34,17 +33,14 @@ schema_view = get_schema_view(
 )
 router = DefaultRouter()
 
-router.register('collection', CollectionViewSwet)
-router.register('products', ProductViewSet)
-router.register('category', CategoryViewSet)
-
-
+# router.register('products', ProductViewSet)
+# router.register('callback', CallBackViewSet)
 
 urlpatterns = [
     path('', schema_view.with_ui('swagger', cache_timeout=0)),
     path('admin/', admin.site.urls),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('api/v1/', include(router.urls)),
-    path('api/v1/collection/<int:pk>/products/', CollectionDetailViewSet.as_view({'get':'list'})),
-    path('api/v1/products/new_product/', NewProductViewSet.as_view({'get':'list'})),
+    path('api/v1/products/', include('products.urls')),
+    path('api/v1/zeon_media/', include('zeon_media.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

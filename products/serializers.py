@@ -1,11 +1,5 @@
-from dataclasses import fields
 from rest_framework import serializers
 from .models import * 
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        exclude = ('slug', )
 
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,32 +9,27 @@ class CollectionSerializer(serializers.ModelSerializer):
 class CollectionDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ( 'id', 'name', 'old_price','price', 'sale', 'size', 'favorite', )
+        fields = ( 'id', 'name', 'old_price','price', 'sale', 'size', 'favorite', 'collection', )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['images'] = ImageSerialiser(instance.images.all(), many=True, context=self.context).data
+        representation['images'] = ProductImageSerialiser(instance.images.all(), many=True, context=self.context).data
+        representation['collection'] = instance.collection.name
         return representation
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        exclude = ('slug', )
-
-    def validate_name(self, name):
-        if Product.objects.filter(slug=name.lower().replace(' ', '-')).exists():
-            raise serializers.ValidationError('Product with such name already exists')
-        return name
+        exclude = ('slug', 'top_saled', 'new_product', 'available', 'created_at')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['collection'] = instance.collection.name
-        representation['category'] = instance.category.name
         representation['favorite'] = instance.favorites.all()
-        representation['images'] = ImageSerialiser(instance.images.all(), many=True, context=self.context).data
+        representation['images'] = ProductImageSerialiser(instance.images.all(), many=True, context=self.context).data
         return representation
 
-class ImageSerialiser(serializers.ModelSerializer):
+class ProductImageSerialiser(serializers.ModelSerializer):
     class Meta:
-        model = Image
-        fields = '__all__'
+        model = ProductImage
+        exclude = ('product', )

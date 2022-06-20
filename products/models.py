@@ -1,27 +1,17 @@
+from email.mime import image
 from django.db import models
 from colorfield.fields import ColorField
+from django.forms import ImageField, SlugField
 
 class Collections(models.Model):
     name = models.CharField(max_length=100, verbose_name='Коллекция')
     slug =models.SlugField(max_length=100, unique=True)
-    images = models.ImageField(upload_to='collction_image')
+    images = models.ImageField(upload_to='collction_image', verbose_name='Фотография')
 
     class Meta:
         ordering = ('name', )
         verbose_name = ' Коллекция'
         verbose_name_plural = 'Коллекции'
-
-    def __str__(self):
-        return self.name
-    
-class Category(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Категория')
-    slug =models.SlugField(max_length=100, unique=True)
-
-    class Meta:
-        ordering = ('name', )
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
@@ -31,12 +21,9 @@ class Product(models.Model):
                                                 on_delete=models.CASCADE, 
                                                 blank=True, null=True, 
                                                 verbose_name='Коллекция')
-    category = models.ForeignKey(Category, related_name='products', 
-                                           on_delete=models.CASCADE, 
-                                           verbose_name='Категоря' )
     top_saled = models.BooleanField(default=True, verbose_name='Хит продаж')
     new_product = models.BooleanField(default=True, verbose_name='Новинки')
-    name = models.CharField(max_length=100, verbose_name='название')
+    name = models.CharField(max_length=100, verbose_name='название', unique=True)
     slug = models.SlugField(max_length=100, unique=True)
     vendor_code = models.CharField(max_length=100, verbose_name='артикул')
     old_price = models.IntegerField(default=True, verbose_name='старая цена')
@@ -68,8 +55,8 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-class Image(models.Model):
-    image = models.ImageField(upload_to='products', blank=True, null=True)
+class ProductImage(models.Model):
+    image = models.ImageField(upload_to='products', blank=True, null=True, verbose_name='Фотография')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     color = ColorField(default=True, verbose_name='Цвет')
 
