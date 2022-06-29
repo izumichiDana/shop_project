@@ -1,5 +1,7 @@
 from django.db import models
 from django.forms import ValidationError
+from phonenumber_field.modelfields import PhoneNumberField
+from multiselectfield import MultiSelectField
 
 class News(models.Model):
     title = models.CharField(max_length=100, verbose_name='Заголовок')
@@ -7,7 +9,6 @@ class News(models.Model):
     images = models.ImageField(upload_to='news_image', verbose_name='Фотография')
 
     class Meta:
-        ordering = ('title', )
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
 
@@ -15,25 +16,24 @@ class News(models.Model):
         return self.title
 
 class Slider(models.Model):
-    urlka = models.URLField(verbose_name='Ссылка', blank=True, null=True)
+    urlka = models.URLField(verbose_name='Ссылка', blank=True)
 
     class Meta:
         verbose_name = 'Слайдер'
         verbose_name_plural = 'Слайдеры'
 
     def __str__(self):
-        return self.urlka
+        return f'{self.urlka} {self.image}'
 
 class SliderImage(models.Model):
-    image = models.ImageField(upload_to='slider_image', verbose_name='Фотография')
-    slider = models.ForeignKey(Slider,on_delete=models.CASCADE, related_name='slider' )
+    slider_image = models.ImageField(upload_to='slider_image',  blank=True, null=True, verbose_name='Фотография',)
+    slider = models.ForeignKey(Slider,on_delete=models.CASCADE, related_name='slider',)
 
 class AboutUs(models.Model):
     title = models.CharField(max_length=100, verbose_name='Заголовок')
     decription = models.TextField(verbose_name='Описание')
 
     class Meta:
-        ordering = ('title', )
         verbose_name = 'О нас'
         verbose_name_plural = 'О нас'
 
@@ -46,7 +46,6 @@ class PublicOffert(models.Model):
     description = models.TextField(verbose_name='Описание')
 
     class Meta:
-        ordering = ('title', )
         verbose_name = 'Публичная офферта'
         verbose_name_plural = 'Публичная офферта'
 
@@ -65,7 +64,6 @@ class OurAdvantages(models.Model):
     image = models.ImageField(upload_to='advantage_image', verbose_name='Фотография', validators=[custom_validator])
 
     class Meta:
-        ordering = ('title', )
         verbose_name = 'Наши преимущества'
         verbose_name_plural = 'Наши преимущества'
 
@@ -74,13 +72,12 @@ class OurAdvantages(models.Model):
 
 class CallBack(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя',)
-    phone_num = models.CharField(max_length=100, verbose_name='Номер')
+    phone_num = PhoneNumberField(blank=True, verbose_name='Номер')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время обращения')
     callback_type = models.CharField(max_length=100, default='Обратный звонок', verbose_name='Тип обращения')
     status_call = models.BooleanField(default=False, verbose_name='Позвонили?')
 
     class Meta:
-        ordering = ('name', )
         verbose_name = 'Обратный звонок'
         verbose_name_plural = 'Обратные звонки'
 
@@ -88,17 +85,76 @@ class CallBack(models.Model):
         return f'{self.name} {self.created_at}'
 
 class HelpImage(models.Model):
-    images = models.ImageField(upload_to='helpers_image', verbose_name='Фотография')
-
-class Helpers(models.Model):
-    question = models.TextField(verbose_name='Вопросы')
-    answer = models.TextField(verbose_name='Ответ')
-    image = models.ForeignKey(HelpImage, on_delete=models.CASCADE, related_name='image', verbose_name='Фотография')
+    images = models.ImageField(upload_to='helpers_image', blank=True, null=True, verbose_name='Фотография')
 
     class Meta:
-        verbose_name = 'Вопрос и Ответ'
+        verbose_name = ' Вопрос и Ответ'
         verbose_name_plural = 'Вопросы и Ответы'
 
     def __str__(self):
-        return self.answer
+        return f'{self.images}'
+
+class Helpers(models.Model):
+    question = models.TextField(verbose_name='Вопросы')
+    answer = models.TextField(verbose_name='Ответы')
+    help = models.ForeignKey(HelpImage, on_delete=models.CASCADE, related_name='image', blank=True, null=True, verbose_name='Фотография')
+
+
+class Futer(models.Model):
+    futer_image = models.ImageField(upload_to='futer_image', verbose_name='Фото для Футера',)
+    heder_image = models.ImageField(upload_to='heder_image', verbose_name='Фото для Хедера',)
+    information = models.TextField(verbose_name='Текстовая Информация')
+    phone_number = PhoneNumberField(blank=True, verbose_name='Номер')
+
+    class Meta:
+        verbose_name = 'Футер'
+        verbose_name_plural = 'Футер'
+
+    def __str__(self):
+        return f'{self.information} {self.phone_number}'
+
+CONTACT_LINKS = (
+    ('Number', 'Number'),
+    ('Mail', 'Mail'),
+    ('Telegram', 'Telegram'),
+    ('WhatsApp', 'WhatsApp'),
+    ('Instagram', 'Instagram'),
+)
+
+class FuterLink(models.Model):
+    name = MultiSelectField(choices=CONTACT_LINKS, max_length=254, max_choices=3, db_index=True, default=('NUMBER', 'Number'), verbose_name='Выбор из списка')
+    number = models.CharField(max_length=30, blank=True, verbose_name='введенные данные')
+    num = PhoneNumberField(blank=True, verbose_name='Номер')
+    whatsapp = models.CharField(max_length=100, blank=True, verbose_name='Whatsapp')
+    instagram = models.CharField(max_length=100, blank=True, verbose_name='Instagram')
+    mail = models.CharField(max_length=100, blank=True, verbose_name='Почта')
+    telegram = models.CharField(max_length=100, blank=True,  verbose_name='Telegram')
+
+    class Meta:
+        verbose_name = 'Ссылка футера'
+        verbose_name_plural = 'Ссылки футера'
+
+    def __str__(self):
+        return f'{self.num} {self.whatsapp} {self.instagram} {self.mail} {self.telegram} {self.name} {self.number}'
+
+    def save(self, *args, **kwargs): 
+        print(self.name)
+        if 'WhatsApp' in self.name: 
+            self.whatsapp = f'http://wa.me/{self.number}/' 
+        if 'Telegram' in self.name: 
+            self.telegram = f'https://t.me/{self.number}/' 
+        if 'Instagram' in self.name: 
+            self.instagram = f'https://www.instagram.com/{self.number}/' 
+        if 'Mail' in self.name: 
+            self.mail = f'https://mail.doodle.com/{self.number}/' 
+        if 'Number' in self.name: 
+            self.num=f'+996{self.number}'
+
+        super(FuterLink, self).save(*args, **kwargs)
+
+
+
+    
+
+
     

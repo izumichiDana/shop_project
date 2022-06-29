@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,13 +45,21 @@ INSTALLED_APPS = [
     # myapps
 
     'rest_framework',
+    'phonenumber_field',
+    'multiselectfield',
+    'cart',
     'products',
     'zeon_media',
     'drf_yasg',
     'colorfield',
     'ckeditor',
     'ckeditor_uploader',
+    'super_inlines',
+
 ]
+
+CART_SESSION_ID = 'cart'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

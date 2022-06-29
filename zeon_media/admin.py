@@ -20,6 +20,14 @@ class AboutUsAdmin(admin.ModelAdmin):
     inlines = [AboutUsImageInline, ]
     form = AboutUsForm
 
+    def has_add_permission(self, request):
+        # check if generally has add permission
+        permissions = super().has_add_permission(request)
+        # set add permission to False, if object already exists
+        if permissions and AboutUs.objects.exists():
+            permissions = False
+        return permissions
+
 class SliderImageInline(admin.TabularInline):
     model = SliderImage
     min_num = 1
@@ -28,7 +36,7 @@ class SliderImageInline(admin.TabularInline):
 
 class SliderAdmin(admin.ModelAdmin):
     inlines = [SliderImageInline, ]
-
+    list_display = ('urlka',)
 
 class NewsAdminForm(forms.ModelForm):
     descrintion = forms.CharField(label='Описание', widget=CKEditorUploadingWidget)
@@ -52,13 +60,56 @@ class PublicOffertAdmin(admin.ModelAdmin):
     list_display_links = ('title',)
     form = PublicOffertForm
 
-admin.site.register(CallBack)
+    def has_add_permission(self, request):
+        permissions = super().has_add_permission(request)
+        if permissions and PublicOffert.objects.exists():
+            permissions = False
+        return permissions
+
+class CallBackAdmin(admin.ModelAdmin):
+    list_display = ('name', 'phone_num', 'created_at', 'callback_type', 'status_call',)
+
+class HelpersInline(admin.TabularInline):
+    model = Helpers
+    min_num = 1
+    max_num = 12
+    extra = 0
+
+class HelpAdmin(admin.ModelAdmin):
+    fields = ('images', )
+    list_display = ('images', )
+    inlines = [HelpersInline, ]
+
+# class HelpersAdmin(admin.ModelAdmin):
+#     list_display = ('question', 'answer', 'help')
+
+class FuterLinkAdmin(admin.ModelAdmin):
+    fields = ('num', 'whatsapp', 'instagram', 'mail', 'telegram', 'name' , 'number')
+    list_display = ('num', 'whatsapp', 'instagram', 'mail', 'telegram', 'name' , 'number')
+
+    def has_add_permission(self, request):
+        permissions = super().has_add_permission(request)
+        if permissions and FuterLink.objects.exists():
+            permissions = False
+        return permissions
+
+class FuterAdmin(admin.ModelAdmin):
+    list_display = ('phone_number', 'information', 'heder_image', 'futer_image')
+
+    def has_add_permission(self, request):
+        permissions = super().has_add_permission(request)
+        if permissions and Futer.objects.exists():
+            permissions = False
+        return permissions
+
+admin.site.register(CallBack, CallBackAdmin)
 admin.site.register(PublicOffert, PublicOffertAdmin)
 admin.site.register(AboutUs, AboutUsAdmin)
 admin.site.register(News, NewsAdmin)
-admin.site.register(HelpImage)
-admin.site.register(Helpers)
 admin.site.register(Slider, SliderAdmin)
 admin.site.register(OurAdvantages)
+admin.site.register(HelpImage, HelpAdmin)
+admin.site.register(Futer, FuterAdmin)
+admin.site.register(FuterLink, FuterLinkAdmin)
 
 

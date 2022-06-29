@@ -33,8 +33,15 @@ schema_view = get_schema_view(
 )
 router = DefaultRouter()
 
-# router.register('products', ProductViewSet)
-# router.register('callback', CallBackViewSet)
+router.register('slider', SliderView)
+router.register('top_saled', TopSaledProductView)
+router.register('new_product', NewProductView)
+router.register('collection', CollectionView)
+router.register('our_advantages', OurAdvantagesView)
+router.register('products', ProductView)
+router.register('favorite', FavoriteProductView)
+
+
 
 urlpatterns = [
     path('', schema_view.with_ui('swagger', cache_timeout=0)),
@@ -42,5 +49,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('api/v1/', include(router.urls)),
     path('api/v1/products/', include('products.urls')),
+    path('api/v1/products/favorite/<int:id>/', favorite),
     path('api/v1/zeon_media/', include('zeon_media.urls')),
+    path('api/v1/cart/', include('cart.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -42,31 +42,39 @@ class PublicOffertSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CallBackSerializer(serializers.ModelSerializer):
-    phone_num = serializers.CharField(
-                                    min_length=9,   
-                                    required=True,
-    )
+    phone_num = serializers.CharField(required=True,)
     name = serializers.CharField(required=True,)
 
     class Meta:
         model = CallBack
         fields = ('name', 'phone_num', 'callback_type')
 
-class HelpImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HelpImage
-        fields = '__all__'
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)   
-        action = self.context.get('action')
-        if action == 'retrive':
-            representation['question'] = HelpersSerializer(instance=help.all(), many=True).data
-        else:
-            representation['question'] = instance.help.all().count()
-        return representation
 
 class HelpersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Helpers
         fields = '__all__'
+
+class HelpImageSerializer(serializers.ModelSerializer):
+    help = HelpersSerializer(many=True)
+
+    class Meta:
+        model = HelpImage
+        fields = '__all__'
+
+
+class OurAdvantagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OurAdvantages
+        fields = '__all__'
+
+class FuterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Futer
+        fields = '__all__'
+
+class FuterLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FuterLink
+        fields = '__all__'
+

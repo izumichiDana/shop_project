@@ -9,6 +9,7 @@ urlpatterns = [
     path('public_offert/', PublicOffertView.as_view()),
     path('about_us/', AboutUsView.as_view()),
     path('call_back/', CallBackView.as_view()),
-    path('slider/', SliderView.as_view()),
+    path('futer/', FuterView.as_view()),
+    path('futer_link/', FuterLinkView.as_view()),
 
 ]
