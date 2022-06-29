@@ -80,25 +80,24 @@ class OrderAPIView(CreateAPIView):
 
 
         for key, item in cart.cart.items():
-            for id in item['product']:
+            for id, color in item.items():
                 print(item)
-                image = ProductImage.objects.get(id=int(id))
+                image = ProductImage.objects.all()
                 print(image)
                 old_price = item['old_price']
                 price = item['price']
-                # count = color
+                count = color
                 OrderProduct.objects.create(
                     byer=check,
                     old_price=old_price,
                     price=price,
-                    # count=count,
-                    image=image.image,
-                    color=image.color,
-                    name=image.image.name,
-                    size_range=image.image.size
+                    count=count,
+                    # image=image.image,
+                    # color=image.color,
+                    # name=image.image.name,
+                    # size_range=image.image.size
                     )
         
-
         cart.clear()
         return Response({'status': 'success'})
 

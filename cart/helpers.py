@@ -24,7 +24,7 @@ class Cart:
                                     'product': str(product.id),
                                     'stock': str(product.stock),
                                     'old_price': str(product.old_price),
-                                    'new_price': str(product.price),
+                                    # 'new_price': str(product.price),
                                     'price': str(product.price),
                                     'quantity': 0,
                                     # 'colors':str(color)
